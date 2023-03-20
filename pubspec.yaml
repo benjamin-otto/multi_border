@@ -1,0 +1,19 @@
+name: multi_border
+description: A new Flutter package project.
+version: 0.0.1
+homepage: https://github.com/benjamin-otto/multi_border
+
+environment:
+  sdk: ">=2.19.3 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter: null
