@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'mb_border.dart';
 import 'extensions.dart';
 
+/// Draws the [MultiBorder] borders.
 class MultiBorderPainter extends CustomPainter {
   MultiBorderPainter({
     required this.shape,
@@ -10,8 +11,15 @@ class MultiBorderPainter extends CustomPainter {
     required this.innerRadius,
   });
 
+  /// The shape of the border.
+  ///
+  /// [BoxShape.rectangle] or [BoxShape.circle]
   final BoxShape shape;
+
+  /// The color and width of each border.
   final List<MBBorder> borders;
+
+  /// The innermost radius that will be added upon for each more outward border.
   final BorderRadius innerRadius;
 
   @override
@@ -39,15 +47,15 @@ class MultiBorderPainter extends CustomPainter {
       final painted = totalWidth - widthToPaint;
       final additionalRadius = painted + halfBorderWidth;
 
-      final rrectBorder = RRect.fromLTRBAndCorners(
+      final rrect = RRect.fromLTRBAndCorners(
         offset,
         offset,
         size.width - offset,
         size.height - offset,
-        topLeft: innerRadius.topLeft.add(additionalRadius),
-        topRight: innerRadius.topRight.add(additionalRadius),
-        bottomLeft: innerRadius.bottomLeft.add(additionalRadius),
-        bottomRight: innerRadius.bottomRight.add(additionalRadius),
+        topLeft: innerRadius.topLeft.accrueRounded(additionalRadius),
+        topRight: innerRadius.topRight.accrueRounded(additionalRadius),
+        bottomLeft: innerRadius.bottomLeft.accrueRounded(additionalRadius),
+        bottomRight: innerRadius.bottomRight.accrueRounded(additionalRadius),
       );
 
       final paint = Paint()
@@ -55,7 +63,7 @@ class MultiBorderPainter extends CustomPainter {
         ..strokeWidth = border.width
         ..style = PaintingStyle.stroke;
 
-      canvas.drawRRect(rrectBorder, paint);
+      canvas.drawRRect(rrect, paint);
       widthToPaint -= border.width;
     }
   }

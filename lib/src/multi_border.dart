@@ -5,6 +5,7 @@ import 'mb_border.dart';
 import 'multi_border_painter.dart';
 import 'shortest_side_clipper.dart';
 
+/// Wraps a child widget with multiple borders.
 class MultiBorder extends StatelessWidget {
   const MultiBorder({
     super.key,
@@ -16,6 +17,8 @@ class MultiBorder extends StatelessWidget {
         assert(shape == BoxShape.rectangle || innerRadius == BorderRadius.zero,
             'BoxShape.circle [shape] does not need a [borderRadius]');
 
+  /// Creates a border for each color supplied in [colors].
+  /// Each border will be of equal width [width].
   factory MultiBorder.evenBorders({
     required List<Color> colors,
     required Widget child,
@@ -34,9 +37,16 @@ class MultiBorder extends StatelessWidget {
     );
   }
 
+  /// Describes the color and width of each border.
   final List<MBBorder> borders;
+
+  /// Widget to be wrapped with borders.
   final Widget child;
+
+  /// [BoxShape.rectangle] or [BoxShape.circle]
   final BoxShape shape;
+
+  /// The innermost radius that will be added upon for each more outward border.
   final BorderRadius innerRadius;
 
   @override

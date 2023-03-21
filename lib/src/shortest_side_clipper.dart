@@ -1,5 +1,9 @@
 import 'package:flutter/widgets.dart';
 
+/// Clips from a square based on the shortest side and centered.
+///
+/// Used for clipping perfect circles for a [MultiBorder]
+/// with a [shape] of [BoxShape.circle]
 class ShortestSideClipper extends CustomClipper<Rect> {
   @override
   Rect getClip(Size size) {
