@@ -32,16 +32,14 @@ class Examples extends StatelessWidget {
   }
 
   List<Widget> get _examples => [
-        const SizedBox(height: 32),
         _evenBordersSharpRectangle,
         _evenBordersRoundedRectangle,
         _evenBordersCircle,
         _customWidthBordersRectangle,
         _customWidthBordersCircle,
-        const SizedBox(height: 32),
       ];
 
-  List<Color> get _evenBordersColors => const [
+  List<Color> get _evenWidthBorderColors => const [
         Color(0xFFF14A42),
         Color(0xFFF27D3B),
         Color(0xFFF2A83A),
@@ -57,21 +55,21 @@ class Examples extends StatelessWidget {
 
   MultiBorder get _evenBordersSharpRectangle => MultiBorder.evenBorders(
         width: 8,
-        colors: _evenBordersColors,
+        colors: _evenWidthBorderColors,
         child: _child,
       );
 
   MultiBorder get _evenBordersRoundedRectangle => MultiBorder.evenBorders(
         width: 8,
         innerRadius: BorderRadius.circular(8),
-        colors: _evenBordersColors,
+        colors: _evenWidthBorderColors,
         child: _child,
       );
 
   MultiBorder get _evenBordersCircle => MultiBorder.evenBorders(
         shape: BoxShape.circle,
         width: 8,
-        colors: _evenBordersColors,
+        colors: _evenWidthBorderColors,
         child: _child,
       );
 
@@ -93,16 +91,10 @@ class Examples extends StatelessWidget {
   Widget get _child => Container(
         width: 100,
         height: 100,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(16),
         color: const Color(0xFF4B3D2F),
-        child: const Text(
-          'Peanut\nButter\nBorder\nTime',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Color(0xFFBEAC9D),
-          ),
+        child: const Icon(
+          Icons.thumb_up,
+          color: Color(0xFFCEC1B6),
         ),
       );
 }
