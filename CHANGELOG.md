@@ -1,6 +1,6 @@
 ## 0.0.2
 
-* Add a more detail package description.
+* Add a more detailed package description.
 
 ## 0.0.1
 
