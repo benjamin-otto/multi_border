@@ -1,6 +1,6 @@
 name: multi_border
 description: Quickly wrap widgets with multiple borders of varying colors and widths.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/benjamin-otto/multi_border
 
 environment:
