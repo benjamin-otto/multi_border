@@ -1,81 +1,101 @@
 import 'package:flutter/material.dart';
 
 import 'extensions.dart';
-import 'mb_border.dart';
-import 'multi_border_painter.dart';
-import 'shortest_side_clipper.dart';
 
-/// Wraps a child widget with multiple borders.
-class MultiBorder extends StatelessWidget {
-  const MultiBorder({
-    super.key,
-    required this.borders,
-    required this.child,
-    this.shape = BoxShape.rectangle,
+/// A decoration class for adding multiple borders to widgets.
+class MultiBorderDecoration extends ShapeDecoration {
+  /// Creates a border for each BorderSide supplied in [borderSides].
+  MultiBorderDecoration({
+    required this.borderSides,
+    this.boxShape = BoxShape.rectangle,
     this.innerRadius = BorderRadius.zero,
-  })  : assert(borders.length > 0),
-        assert(shape == BoxShape.rectangle || innerRadius == BorderRadius.zero,
-            'BoxShape.circle [shape] does not need a [borderRadius]');
+    super.color,
+    super.gradient,
+    super.image,
+    super.shadows,
+  })  : assert(borderSides.isNotEmpty),
+        assert(
+            boxShape == BoxShape.rectangle || innerRadius == BorderRadius.zero,
+            '[boxShape] set to BoxShape.circle does not require an [innerRadius]'),
+        super(
+          shape: (boxShape == BoxShape.rectangle)
+              ? _compositeRRectBorder(borderSides, innerRadius)
+              : _compositeCircleBorder(borderSides),
+        );
 
-  /// Creates a border for each color supplied in [colors].
+  /// Creates a border for each Color supplied in [borderColors].
+  ///
   /// Each border will be of equal width [width].
-  factory MultiBorder.evenBorders({
-    required List<Color> colors,
-    required Widget child,
-    double width = 1.0,
-    BoxShape shape = BoxShape.rectangle,
+  factory MultiBorderDecoration.evenBorders({
+    required List<Color> borderColors,
+    BoxShape boxShape = BoxShape.rectangle,
     BorderRadius innerRadius = BorderRadius.zero,
+    double width = 1.0,
+    Color? color,
+    Gradient? gradient,
+    DecorationImage? image,
+    List<BoxShadow>? shadows,
   }) {
-    return MultiBorder(
-      shape: shape,
+    final borderSides = borderColors.fold(
+      <BorderSide>[],
+      (borderSides, borderColor) =>
+          borderSides..add(BorderSide(color: borderColor, width: width)),
+    );
+
+    return MultiBorderDecoration(
+      borderSides: borderSides,
+      boxShape: boxShape,
       innerRadius: innerRadius,
-      borders: colors.fold(
-        <MBBorder>[],
-        (borders, color) => borders..add(MBBorder(color: color, width: width)),
-      ),
-      child: child,
+      color: color,
+      gradient: gradient,
+      image: image,
+      shadows: shadows,
     );
   }
 
-  /// Describes the color and width of each border.
-  final List<MBBorder> borders;
-
-  /// Widget to be wrapped with borders.
-  final Widget child;
+  /// Describes the [color] and [width] of each border.
+  final List<BorderSide> borderSides;
 
   /// [BoxShape.rectangle] or [BoxShape.circle]
-  final BoxShape shape;
+  final BoxShape boxShape;
 
-  /// The innermost radius that will be added upon for each more outward border.
+  /// The radius of the innermost border to be drawn.
   final BorderRadius innerRadius;
 
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      foregroundPainter: MultiBorderPainter(
-        shape: shape,
-        borders: borders,
-        innerRadius: innerRadius,
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(borders.totalWidth),
-        child: _clippedChild,
-      ),
-    );
+  static ShapeBorder _compositeRRectBorder(
+    List<BorderSide> borderSides,
+    BorderRadius innerRadius,
+  ) {
+    final shapeBorders = <ShapeBorder>[];
+    double radiusIncrement = 0.0;
+
+    for (int i = 0; i < borderSides.length; i++) {
+      shapeBorders.add(
+        RoundedRectangleBorder(
+          side: borderSides[i],
+          borderRadius: innerRadius.incrementNonZeroCorners(radiusIncrement),
+        ),
+      );
+      if (i + 1 < borderSides.length) {
+        final nextDiff = borderSides[i + 1].width - borderSides[i].width;
+        radiusIncrement += borderSides[i].width + nextDiff;
+      }
+    }
+
+    return shapeBorders.reduce((tot, next) => tot + next);
   }
 
-  Widget get _clippedChild {
-    switch (shape) {
-      case BoxShape.rectangle:
-        return ClipRRect(
-          borderRadius: innerRadius,
-          child: child,
+  static ShapeBorder _compositeCircleBorder(List<BorderSide> borderSides) {
+    return borderSides.sublist(1).fold(
+          CircleBorder(side: borderSides[0], eccentricity: 1.0),
+          (prevCircleBorder, borderSide) =>
+              prevCircleBorder +
+              CircleBorder(side: borderSide, eccentricity: 1.0),
         );
-      case BoxShape.circle:
-        return ClipOval(
-          clipper: ShortestSideClipper(),
-          child: child,
-        );
-    }
+  }
+
+  @override
+  Path getClipPath(Rect rect, TextDirection textDirection) {
+    return shape.getInnerPath(rect, textDirection: textDirection);
   }
 }

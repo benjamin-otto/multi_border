@@ -1,5 +1,4 @@
-/// A library for quickly wrapping widgets with multiple borders.
+/// A library for quickly adding multiple borders to widgets.
 library multi_border;
 
 export 'src/multi_border.dart';
-export 'src/mb_border.dart';
